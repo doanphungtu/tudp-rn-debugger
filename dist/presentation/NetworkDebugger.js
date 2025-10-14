@@ -75,11 +75,8 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
         };
     }, [onRequestsUpdate]);
     const handleCopyCurl = async (request) => {
-        console.log("🔄 handleCopyCurl called");
         const curlCommand = (0, curlGenerator_1.generateCurlCommand)(request);
-        console.log("📝 Generated cURL:", curlCommand.substring(0, 100) + "...");
         const success = await (0, curlGenerator_1.copyToClipboard)(curlCommand);
-        console.log("📋 Copy result:", success);
         if (success) {
             (0, Toast_1.showSuccessToast)("Curl command copied to clipboard!");
         }
@@ -134,14 +131,27 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
                         "URL: ",
                         safeStringify(selectedRequest.url)),
                     react_1.default.createElement(react_native_1.Text, { style: styles.detailText },
-                        "Method: ",
-                        safeStringify(selectedRequest.method).toUpperCase()),
+                        "Method:",
+                        " ",
+                        react_1.default.createElement(react_native_1.Text, { style: [
+                                styles.detailText,
+                                {
+                                    color: (0, curlGenerator_1.getStatusColor)(selectedRequest.status),
+                                    fontWeight: "600",
+                                },
+                            ] }, safeStringify(selectedRequest.method).toUpperCase())),
                     react_1.default.createElement(react_native_1.Text, { style: styles.detailText },
                         "Status:",
                         " ",
-                        selectedRequest.status
+                        react_1.default.createElement(react_native_1.Text, { style: [
+                                styles.detailText,
+                                {
+                                    color: (0, curlGenerator_1.getStatusColor)(selectedRequest.status),
+                                    fontWeight: "600",
+                                },
+                            ] }, selectedRequest.status
                             ? safeStringify(selectedRequest.status)
-                            : "PENDING"),
+                            : "PENDING")),
                     react_1.default.createElement(react_native_1.Text, { style: styles.detailText },
                         "Duration: ",
                         (0, curlGenerator_1.formatDuration)(selectedRequest.duration)),
@@ -248,7 +258,7 @@ const styles = react_native_1.StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 8,
+        marginBottom: 4,
     },
     methodUrlContainer: {
         flex: 1,
@@ -259,7 +269,7 @@ const styles = react_native_1.StyleSheet.create({
         fontWeight: "700",
         fontSize: 12,
         minWidth: 50,
-        marginRight: 8,
+        marginRight: 6,
     },
     url: {
         flex: 1,
@@ -309,14 +319,14 @@ const styles = react_native_1.StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        padding: 16,
+        padding: 10,
         backgroundColor: "#fff",
         borderTopWidth: 1,
         borderTopColor: "#e0e0e0",
     },
     clearButton: {
         backgroundColor: "#2196F3",
-        padding: 12,
+        padding: 10,
         borderRadius: 8,
         alignItems: "center",
         justifyContent: "center",
@@ -335,7 +345,7 @@ const styles = react_native_1.StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 16,
+        padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#e0e0e0",
     },
@@ -355,7 +365,7 @@ const styles = react_native_1.StyleSheet.create({
     },
     modalContent: {
         flex: 1,
-        padding: 16,
+        padding: 10,
     },
     // Details view styles
     detailsContainer: {
@@ -366,7 +376,7 @@ const styles = react_native_1.StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 16,
+        padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#e0e0e0",
     },
@@ -387,10 +397,9 @@ const styles = react_native_1.StyleSheet.create({
     },
     detailsContent: {
         flex: 1,
-        padding: 16,
+        padding: 10,
     },
     detailsFooter: {
-        padding: 16,
         borderTopWidth: 1,
         borderTopColor: "#e0e0e0",
     },
@@ -428,7 +437,7 @@ const styles = react_native_1.StyleSheet.create({
     },
     copyCurlButton: {
         backgroundColor: "#2196F3",
-        padding: 16,
+        padding: 10,
         borderRadius: 8,
         alignItems: "center",
         justifyContent: "center",

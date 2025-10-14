@@ -7,23 +7,23 @@ const generateId_1 = require("../utils/generateId");
 let XHRInterceptor = null;
 try {
     // React Native 0.80+
-    const module = require('react-native/src/private/devsupport/devmenu/elementinspector/XHRInterceptor');
+    const module = require("react-native/src/private/devsupport/devmenu/elementinspector/XHRInterceptor");
     XHRInterceptor = (_a = module.default) !== null && _a !== void 0 ? _a : module;
 }
 catch {
     try {
         // React Native 0.79+
-        const module = require('react-native/src/private/inspector/XHRInterceptor');
+        const module = require("react-native/src/private/inspector/XHRInterceptor");
         XHRInterceptor = (_b = module.default) !== null && _b !== void 0 ? _b : module;
     }
     catch {
         try {
             // React Native 0.78 and below
-            const module = require('react-native/Libraries/Network/XHRInterceptor');
+            const module = require("react-native/Libraries/Network/XHRInterceptor");
             XHRInterceptor = (_c = module.default) !== null && _c !== void 0 ? _c : module;
         }
         catch {
-            console.warn('[tudp-rn-debugger] XHRInterceptor not found, falling back to fetch patching');
+            console.warn("[tudp-rn-debugger] XHRInterceptor not found, falling back to fetch patching");
         }
     }
 }
@@ -40,12 +40,12 @@ class NetworkLogger {
         this.originalFetch = null;
         // Debounced callback to prevent excessive updates
         this.debouncedNotify = this.debounce(() => {
-            this.callbacks.forEach(callback => {
+            this.callbacks.forEach((callback) => {
                 try {
                     callback([...this.requests]);
                 }
                 catch (error) {
-                    console.error('[tudp-rn-debugger] Callback error:', error);
+                    console.error("[tudp-rn-debugger] Callback error:", error);
                 }
             });
         }, 100);
@@ -60,43 +60,41 @@ class NetworkLogger {
     startNetworkLogging(options) {
         var _a;
         const force = (_a = options === null || options === void 0 ? void 0 : options.force) !== null && _a !== void 0 ? _a : false;
-        console.log("[tudp-rn-debugger] Starting network logging...", {
-            force,
-            isLogging: this.isLogging,
-            hasXHRInterceptor: !!XHRInterceptor
-        });
-        // If already enabled and not forcing, warn and return
-        if (this.isLogging && !force) {
-            console.warn("[tudp-rn-debugger] Network logging already active");
-            return;
+        try {
+            // Start network logging
+            if (this.isLogging && !(options === null || options === void 0 ? void 0 : options.force)) {
+                console.warn("[tudp-rn-debugger] Network logging already active");
+                return;
+            }
+            if ((options === null || options === void 0 ? void 0 : options.force) && this.isLogging) {
+                // Force restart
+                this.stopNetworkLogging();
+            }
+            // Apply options
+            if ((options === null || options === void 0 ? void 0 : options.maxRequests) !== undefined) {
+                this.maxRequests = Math.max(1, options.maxRequests);
+            }
+            if (options === null || options === void 0 ? void 0 : options.ignoredHosts) {
+                this.ignoredHosts = new Set(options.ignoredHosts);
+            }
+            if (options === null || options === void 0 ? void 0 : options.ignoredUrls) {
+                this.ignoredUrls = new Set(options.ignoredUrls);
+            }
+            if (options === null || options === void 0 ? void 0 : options.ignoredPatterns) {
+                this.ignoredPatterns = options.ignoredPatterns;
+            }
+            // Try XHRInterceptor first, fallback to fetch patching
+            if (XHRInterceptor) {
+                this.enableXHRInterception(force);
+            }
+            else {
+                this.enableFetchPatching(force);
+            }
+            this.isLogging = true;
         }
-        // If forcing restart, stop first
-        if (this.isLogging && force) {
-            console.log("[tudp-rn-debugger] Forcing restart...");
-            this.stopNetworkLogging();
+        catch (error) {
+            console.error("[tudp-rn-debugger] Failed to start network logging:", error);
         }
-        // Apply options
-        if ((options === null || options === void 0 ? void 0 : options.maxRequests) !== undefined) {
-            this.maxRequests = Math.max(1, options.maxRequests);
-        }
-        if (options === null || options === void 0 ? void 0 : options.ignoredHosts) {
-            this.ignoredHosts = new Set(options.ignoredHosts);
-        }
-        if (options === null || options === void 0 ? void 0 : options.ignoredUrls) {
-            this.ignoredUrls = new Set(options.ignoredUrls);
-        }
-        if (options === null || options === void 0 ? void 0 : options.ignoredPatterns) {
-            this.ignoredPatterns = options.ignoredPatterns;
-        }
-        // Try XHRInterceptor first, fallback to fetch patching
-        if (XHRInterceptor) {
-            this.enableXHRInterception(force);
-        }
-        else {
-            this.enableFetchPatching(force);
-        }
-        this.isLogging = true;
-        console.log("[tudp-rn-debugger] Network logging started successfully!");
     }
     enableXHRInterception(force) {
         if (!XHRInterceptor)
@@ -115,7 +113,6 @@ class NetworkLogger {
             XHRInterceptor.setResponseCallback(this.onXHRResponse.bind(this));
             // Enable interception
             XHRInterceptor.enableInterception();
-            console.log("[tudp-rn-debugger] XHRInterceptor enabled successfully");
             return true;
         }
         catch (error) {
@@ -126,13 +123,13 @@ class NetworkLogger {
     enableFetchPatching(force) {
         // Get global object
         let globalObject;
-        if (typeof global !== 'undefined') {
+        if (typeof global !== "undefined") {
             globalObject = global;
         }
-        else if (typeof window !== 'undefined') {
+        else if (typeof window !== "undefined") {
             globalObject = window;
         }
-        else if (typeof self !== 'undefined') {
+        else if (typeof self !== "undefined") {
             globalObject = self;
         }
         else {
@@ -155,7 +152,6 @@ class NetworkLogger {
         }
         // Patch fetch
         globalObject.fetch = this.createFetchWrapper();
-        console.log("[tudp-rn-debugger] Fetch patching enabled successfully");
         return true;
     }
     createFetchWrapper() {
@@ -169,7 +165,6 @@ class NetworkLogger {
             const id = (0, generateId_1.generateId)();
             const startTime = Date.now();
             const timestamp = new Date(startTime).toISOString();
-            console.log("[tudp-rn-debugger] Intercepted request:", { url, method, id });
             // Extract request headers and body
             const requestHeaders = this.extractRequestHeaders(init === null || init === void 0 ? void 0 : init.headers);
             const requestBody = this.extractRequestBody(init === null || init === void 0 ? void 0 : init.body);
@@ -204,11 +199,6 @@ class NetworkLogger {
                     responseHeaders,
                     responseBody,
                 });
-                console.log("[tudp-rn-debugger] Request completed:", {
-                    url,
-                    status: response.status,
-                    duration: request.duration
-                });
                 this.addRequest(request);
                 return response;
             }
@@ -219,11 +209,6 @@ class NetworkLogger {
                     duration: endTime - startTime,
                     error: String(error),
                     responseBody: String(error),
-                });
-                console.log("[tudp-rn-debugger] Request failed:", {
-                    url,
-                    error: String(error),
-                    duration: request.duration
                 });
                 this.addRequest(request);
                 throw error;
@@ -237,7 +222,7 @@ class NetworkLogger {
         }
         xhr._index = this.nextXHRId++;
         this.xhrIdMap.set(xhr._index, () => {
-            return this.requests.findIndex(r => r.id === `${xhr._index}`);
+            return this.requests.findIndex((r) => r.id === `${xhr._index}`);
         });
         const request = {
             id: `${xhr._index}`,
@@ -248,7 +233,6 @@ class NetworkLogger {
             requestHeaders: {},
         };
         this.addRequest(request);
-        console.log("[tudp-rn-debugger] XHR opened:", { method, url, id: request.id });
     }
     onXHRRequestHeader(header, value, xhr) {
         const request = this.getRequest(xhr._index);
@@ -284,11 +268,6 @@ class NetworkLogger {
             duration: endTime - request.startTime,
             responseBody: response,
         });
-        console.log("[tudp-rn-debugger] XHR completed:", {
-            url: request.url,
-            status,
-            duration: request.duration
-        });
         this.debouncedNotify();
     }
     getRequest(xhrIndex) {
@@ -317,7 +296,7 @@ class NetworkLogger {
         // Check ignored patterns
         if (this.ignoredPatterns) {
             const requestString = `${method} ${url}`;
-            if (this.ignoredPatterns.some(pattern => pattern.test(requestString))) {
+            if (this.ignoredPatterns.some((pattern) => pattern.test(requestString))) {
                 return true;
             }
         }
@@ -333,12 +312,12 @@ class NetworkLogger {
                     result[key] = value;
                 });
             }
-            else if (typeof headers === 'object') {
+            else if (typeof headers === "object") {
                 Object.assign(result, headers);
             }
         }
         catch (e) {
-            console.warn('[tudp-rn-debugger] Failed to extract request headers:', e);
+            console.warn("[tudp-rn-debugger] Failed to extract request headers:", e);
         }
         return result;
     }
@@ -347,14 +326,14 @@ class NetworkLogger {
         if (!headers)
             return result;
         try {
-            if (typeof headers.forEach === 'function') {
+            if (typeof headers.forEach === "function") {
                 headers.forEach((value, key) => {
                     result[key] = value;
                 });
             }
         }
         catch (e) {
-            console.warn('[tudp-rn-debugger] Failed to extract response headers:', e);
+            console.warn("[tudp-rn-debugger] Failed to extract response headers:", e);
         }
         return result;
     }
@@ -362,24 +341,24 @@ class NetworkLogger {
         if (!body)
             return null;
         try {
-            if (typeof body === 'string') {
+            if (typeof body === "string") {
                 return body;
             }
             else if (body instanceof FormData) {
-                return '[FormData]';
+                return "[FormData]";
             }
             else if (body instanceof URLSearchParams) {
                 return body.toString();
             }
             else if (body instanceof ArrayBuffer) {
-                return '[ArrayBuffer]';
+                return "[ArrayBuffer]";
             }
             else {
                 return String(body);
             }
         }
         catch (e) {
-            return '[Unable to parse body]';
+            return "[Unable to parse body]";
         }
     }
     addRequest(request) {
@@ -399,28 +378,25 @@ class NetworkLogger {
             // Disable XHR interception if available
             if (XHRInterceptor) {
                 XHRInterceptor.disableInterception();
-                console.log("[tudp-rn-debugger] XHRInterceptor disabled");
             }
             // Restore original fetch if patched
             if (this.originalFetch) {
                 let globalObject;
-                if (typeof global !== 'undefined') {
+                if (typeof global !== "undefined") {
                     globalObject = global;
                 }
-                else if (typeof window !== 'undefined') {
+                else if (typeof window !== "undefined") {
                     globalObject = window;
                 }
-                else if (typeof self !== 'undefined') {
+                else if (typeof self !== "undefined") {
                     globalObject = self;
                 }
                 if (globalObject) {
                     globalObject.fetch = this.originalFetch;
-                    console.log("[tudp-rn-debugger] Fetch restored");
                 }
             }
             this.isLogging = false;
             this.xhrIdMap.clear();
-            console.log("[tudp-rn-debugger] Network logging stopped");
         }
         catch (error) {
             console.error("[tudp-rn-debugger] Error stopping network logging:", error);
@@ -450,10 +426,14 @@ class NetworkLogger {
             hasOriginalFetch: !!this.originalFetch,
             requestCount: this.requests.length,
             maxRequests: this.maxRequests,
-            interceptorEnabled: XHRInterceptor ? XHRInterceptor.isInterceptorEnabled() : false,
-            ignoredHosts: this.ignoredHosts ? Array.from(this.ignoredHosts) : undefined,
+            interceptorEnabled: XHRInterceptor
+                ? XHRInterceptor.isInterceptorEnabled()
+                : false,
+            ignoredHosts: this.ignoredHosts
+                ? Array.from(this.ignoredHosts)
+                : undefined,
             ignoredUrls: this.ignoredUrls ? Array.from(this.ignoredUrls) : undefined,
-            ignoredPatterns: (_a = this.ignoredPatterns) === null || _a === void 0 ? void 0 : _a.map(p => p.toString()),
+            ignoredPatterns: (_a = this.ignoredPatterns) === null || _a === void 0 ? void 0 : _a.map((p) => p.toString()),
         };
     }
     async testInterceptor() {
@@ -461,7 +441,7 @@ class NetworkLogger {
         const debugInfo = this.getDebugInfo();
         console.log("[tudp-rn-debugger] Debug info:", debugInfo);
         try {
-            const response = await fetch('https://httpbin.org/get?test=tudp-debugger');
+            const response = await fetch("https://httpbin.org/get?test=tudp-debugger");
             console.log("[tudp-rn-debugger] Test request completed, status:", response.status);
             return true;
         }

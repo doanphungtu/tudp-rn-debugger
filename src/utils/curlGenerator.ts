@@ -32,8 +32,6 @@ export const generateCurlCommand = (request: NetworkRequest): string => {
  * Simple clipboard copy without external dependencies
  */
 export const simpleCopyToClipboard = (text: string): boolean => {
-  console.log("🔄 Attempting simple clipboard copy...");
-
   try {
     // For React Native - try to access global clipboard if available
     if (typeof global !== "undefined") {
@@ -41,7 +39,6 @@ export const simpleCopyToClipboard = (text: string): boolean => {
       const RN = (global as any).require?.("react-native");
       if (RN?.Clipboard?.setString) {
         RN.Clipboard.setString(text);
-        console.log("✅ Success with global React Native Clipboard");
         return true;
       }
     }
@@ -49,14 +46,11 @@ export const simpleCopyToClipboard = (text: string): boolean => {
     // For Web - try simple navigator clipboard
     if (typeof window !== "undefined" && window.navigator?.clipboard) {
       window.navigator.clipboard.writeText(text);
-      console.log("✅ Success with window.navigator.clipboard");
       return true;
     }
 
-    console.log("❌ No simple clipboard method available");
     return false;
   } catch (error) {
-    console.log("❌ Simple clipboard failed:", error);
     return false;
   }
 };
@@ -65,8 +59,6 @@ export const simpleCopyToClipboard = (text: string): boolean => {
  * Copies text to clipboard (React Native compatible)
  */
 export const copyToClipboard = async (text: string): Promise<boolean> => {
-  console.log("🔄 Attempting to copy to clipboard...");
-
   // Try simple method first
   if (simpleCopyToClipboard(text)) {
     return true;
@@ -78,20 +70,10 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
       const Clipboard = require("@react-native-clipboard/clipboard");
       if (Clipboard?.setString) {
         await Clipboard.setString(text);
-        console.log(
-          "✅ Successfully copied using @react-native-clipboard/clipboard"
-        );
         return true;
-      } else {
-        console.log(
-          "❌ @react-native-clipboard/clipboard setString not available"
-        );
       }
     } catch (clipboardError) {
-      console.log(
-        "❌ @react-native-clipboard/clipboard failed:",
-        clipboardError
-      );
+      // Silently continue to next method
     }
 
     // Method 2: Try legacy React Native Clipboard
@@ -99,32 +81,25 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
       const ReactNative = require("react-native");
       if (ReactNative?.Clipboard?.setString) {
         ReactNative.Clipboard.setString(text);
-        console.log("✅ Successfully copied using legacy RN Clipboard");
         return true;
-      } else {
-        console.log("❌ Legacy RN Clipboard not available");
       }
     } catch (legacyError) {
-      console.log("❌ Legacy RN Clipboard failed:", legacyError);
+      // Silently continue to next method
     }
 
     // Method 3: Try Web Clipboard API
     try {
       if (typeof navigator !== "undefined" && navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
-        console.log("✅ Successfully copied using Web Clipboard API");
         return true;
-      } else {
-        console.log("❌ Web Clipboard API not available");
       }
     } catch (webError) {
-      console.log("❌ Web Clipboard API failed:", webError);
+      // Silently continue
     }
   } catch (error) {
-    console.error("❌ All clipboard methods failed:", error);
+    // Silently fail
   }
 
-  console.log("❌ No clipboard method worked");
   return false;
 };
 

@@ -29,7 +29,6 @@ exports.generateCurlCommand = generateCurlCommand;
  */
 const simpleCopyToClipboard = (text) => {
     var _a, _b, _c, _d;
-    console.log("🔄 Attempting simple clipboard copy...");
     try {
         // For React Native - try to access global clipboard if available
         if (typeof global !== "undefined") {
@@ -37,21 +36,17 @@ const simpleCopyToClipboard = (text) => {
             const RN = (_b = (_a = global).require) === null || _b === void 0 ? void 0 : _b.call(_a, "react-native");
             if ((_c = RN === null || RN === void 0 ? void 0 : RN.Clipboard) === null || _c === void 0 ? void 0 : _c.setString) {
                 RN.Clipboard.setString(text);
-                console.log("✅ Success with global React Native Clipboard");
                 return true;
             }
         }
         // For Web - try simple navigator clipboard
         if (typeof window !== "undefined" && ((_d = window.navigator) === null || _d === void 0 ? void 0 : _d.clipboard)) {
             window.navigator.clipboard.writeText(text);
-            console.log("✅ Success with window.navigator.clipboard");
             return true;
         }
-        console.log("❌ No simple clipboard method available");
         return false;
     }
     catch (error) {
-        console.log("❌ Simple clipboard failed:", error);
         return false;
     }
 };
@@ -61,7 +56,6 @@ exports.simpleCopyToClipboard = simpleCopyToClipboard;
  */
 const copyToClipboard = async (text) => {
     var _a, _b;
-    console.log("🔄 Attempting to copy to clipboard...");
     // Try simple method first
     if ((0, exports.simpleCopyToClipboard)(text)) {
         return true;
@@ -72,50 +66,37 @@ const copyToClipboard = async (text) => {
             const Clipboard = require("@react-native-clipboard/clipboard");
             if (Clipboard === null || Clipboard === void 0 ? void 0 : Clipboard.setString) {
                 await Clipboard.setString(text);
-                console.log("✅ Successfully copied using @react-native-clipboard/clipboard");
                 return true;
-            }
-            else {
-                console.log("❌ @react-native-clipboard/clipboard setString not available");
             }
         }
         catch (clipboardError) {
-            console.log("❌ @react-native-clipboard/clipboard failed:", clipboardError);
+            // Silently continue to next method
         }
         // Method 2: Try legacy React Native Clipboard
         try {
             const ReactNative = require("react-native");
             if ((_a = ReactNative === null || ReactNative === void 0 ? void 0 : ReactNative.Clipboard) === null || _a === void 0 ? void 0 : _a.setString) {
                 ReactNative.Clipboard.setString(text);
-                console.log("✅ Successfully copied using legacy RN Clipboard");
                 return true;
-            }
-            else {
-                console.log("❌ Legacy RN Clipboard not available");
             }
         }
         catch (legacyError) {
-            console.log("❌ Legacy RN Clipboard failed:", legacyError);
+            // Silently continue to next method
         }
         // Method 3: Try Web Clipboard API
         try {
             if (typeof navigator !== "undefined" && ((_b = navigator === null || navigator === void 0 ? void 0 : navigator.clipboard) === null || _b === void 0 ? void 0 : _b.writeText)) {
                 await navigator.clipboard.writeText(text);
-                console.log("✅ Successfully copied using Web Clipboard API");
                 return true;
-            }
-            else {
-                console.log("❌ Web Clipboard API not available");
             }
         }
         catch (webError) {
-            console.log("❌ Web Clipboard API failed:", webError);
+            // Silently continue
         }
     }
     catch (error) {
-        console.error("❌ All clipboard methods failed:", error);
+        // Silently fail
     }
-    console.log("❌ No clipboard method worked");
     return false;
 };
 exports.copyToClipboard = copyToClipboard;

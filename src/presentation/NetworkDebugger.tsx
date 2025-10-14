@@ -82,12 +82,8 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
   }, [onRequestsUpdate]);
 
   const handleCopyCurl = async (request: NetworkRequest) => {
-    console.log("🔄 handleCopyCurl called");
     const curlCommand = generateCurlCommand(request);
-    console.log("📝 Generated cURL:", curlCommand.substring(0, 100) + "...");
-
     const success = await copyToClipboard(curlCommand);
-    console.log("📋 Copy result:", success);
 
     if (success) {
       showSuccessToast("Curl command copied to clipboard!");
@@ -182,13 +178,34 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
               URL: {safeStringify(selectedRequest.url)}
             </Text>
             <Text style={styles.detailText}>
-              Method: {safeStringify(selectedRequest.method).toUpperCase()}
+              Method:{" "}
+              <Text
+                style={[
+                  styles.detailText,
+                  {
+                    color: getStatusColor(selectedRequest.status),
+                    fontWeight: "600",
+                  },
+                ]}
+              >
+                {safeStringify(selectedRequest.method).toUpperCase()}
+              </Text>
             </Text>
             <Text style={styles.detailText}>
               Status:{" "}
-              {selectedRequest.status
-                ? safeStringify(selectedRequest.status)
-                : "PENDING"}
+              <Text
+                style={[
+                  styles.detailText,
+                  {
+                    color: getStatusColor(selectedRequest.status),
+                    fontWeight: "600",
+                  },
+                ]}
+              >
+                {selectedRequest.status
+                  ? safeStringify(selectedRequest.status)
+                  : "PENDING"}
+              </Text>
             </Text>
             <Text style={styles.detailText}>
               Duration: {formatDuration(selectedRequest.duration)}
@@ -381,7 +398,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   methodUrlContainer: {
     flex: 1,
@@ -392,7 +409,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 12,
     minWidth: 50,
-    marginRight: 8,
+    marginRight: 6,
   },
   url: {
     flex: 1,
@@ -442,14 +459,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 16,
+    padding: 10,
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
   },
   clearButton: {
     backgroundColor: "#2196F3",
-    padding: 12,
+    padding: 10,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -468,7 +485,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
   },
@@ -488,7 +505,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     flex: 1,
-    padding: 16,
+    padding: 10,
   },
   // Details view styles
   detailsContainer: {
@@ -499,7 +516,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
   },
@@ -520,10 +537,9 @@ const styles = StyleSheet.create({
   },
   detailsContent: {
     flex: 1,
-    padding: 16,
+    padding: 10,
   },
   detailsFooter: {
-    padding: 16,
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
   },
@@ -561,7 +577,7 @@ const styles = StyleSheet.create({
   },
   copyCurlButton: {
     backgroundColor: "#2196F3",
-    padding: 16,
+    padding: 10,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
