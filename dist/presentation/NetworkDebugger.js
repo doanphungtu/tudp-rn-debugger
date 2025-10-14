@@ -75,14 +75,17 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
         };
     }, [onRequestsUpdate]);
     const handleCopyCurl = async (request) => {
+        console.log("🔄 handleCopyCurl called");
         const curlCommand = (0, curlGenerator_1.generateCurlCommand)(request);
+        console.log("📝 Generated cURL:", curlCommand.substring(0, 100) + "...");
         const success = await (0, curlGenerator_1.copyToClipboard)(curlCommand);
+        console.log("📋 Copy result:", success);
         if (success) {
             (0, Toast_1.showSuccessToast)("Curl command copied to clipboard!");
         }
         else {
             // Fallback: show curl command in alert with copy option
-            (0, Toast_1.showErrorToast)("Clipboard not available");
+            (0, Toast_1.showErrorToast)("Clipboard not available - showing in popup");
             // Show curl command in scrollable alert
             setTimeout(() => {
                 react_native_1.Alert.alert("cURL Command", curlCommand, [{ text: "Close", style: "cancel" }], {
