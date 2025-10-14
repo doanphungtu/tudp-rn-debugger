@@ -31,7 +31,6 @@ catch {
 class NetworkLogger {
     constructor() {
         this.requests = [];
-        this.xhrIdMap = new Map();
         this.maxRequests = 500;
         this.isLogging = false;
         this.nextXHRId = 0;
@@ -177,6 +176,8 @@ class NetworkLogger {
                 requestHeaders,
                 requestBody,
             };
+            // Add request first with initial data
+            this.addRequest(request);
             try {
                 const response = await this.originalFetch(input, init);
                 // Extract response details
@@ -191,26 +192,33 @@ class NetworkLogger {
                 catch (e) {
                     responseBody = "[binary or unreadable]";
                 }
-                // Update request with response data
-                Object.assign(request, {
-                    status: response.status,
-                    endTime,
-                    duration: endTime - startTime,
-                    responseHeaders,
-                    responseBody,
-                });
-                this.addRequest(request);
+                // Find and update the request in the array
+                const requestIndex = this.requests.findIndex((r) => r.id === id);
+                if (requestIndex !== -1) {
+                    Object.assign(this.requests[requestIndex], {
+                        status: response.status,
+                        endTime,
+                        duration: endTime - startTime,
+                        responseHeaders,
+                        responseBody,
+                    });
+                    this.debouncedNotify();
+                }
                 return response;
             }
             catch (error) {
                 const endTime = Date.now();
-                Object.assign(request, {
-                    endTime,
-                    duration: endTime - startTime,
-                    error: String(error),
-                    responseBody: String(error),
-                });
-                this.addRequest(request);
+                // Find and update the request in the array
+                const requestIndex = this.requests.findIndex((r) => r.id === id);
+                if (requestIndex !== -1) {
+                    Object.assign(this.requests[requestIndex], {
+                        endTime,
+                        duration: endTime - startTime,
+                        error: String(error),
+                        responseBody: String(error),
+                    });
+                    this.debouncedNotify();
+                }
                 throw error;
             }
         };
@@ -221,9 +229,6 @@ class NetworkLogger {
             return;
         }
         xhr._index = this.nextXHRId++;
-        this.xhrIdMap.set(xhr._index, () => {
-            return this.requests.findIndex((r) => r.id === `${xhr._index}`);
-        });
         const request = {
             id: `${xhr._index}`,
             url,
@@ -235,46 +240,45 @@ class NetworkLogger {
         this.addRequest(request);
     }
     onXHRRequestHeader(header, value, xhr) {
-        const request = this.getRequest(xhr._index);
-        if (!request)
+        const requestIndex = this.requests.findIndex((r) => r.id === `${xhr._index}`);
+        if (requestIndex === -1)
             return;
+        const request = this.requests[requestIndex];
         if (!request.requestHeaders) {
             request.requestHeaders = {};
         }
         request.requestHeaders[header] = value;
     }
     onXHRSend(data, xhr) {
-        const request = this.getRequest(xhr._index);
-        if (!request)
+        const requestIndex = this.requests.findIndex((r) => r.id === `${xhr._index}`);
+        if (requestIndex === -1)
             return;
+        const request = this.requests[requestIndex];
         request.requestBody = data || null;
         request.startTime = Date.now();
         this.debouncedNotify();
     }
     onXHRHeaderReceived(responseContentType, responseSize, responseHeaders, xhr) {
-        const request = this.getRequest(xhr._index);
-        if (!request)
+        const requestIndex = this.requests.findIndex((r) => r.id === `${xhr._index}`);
+        if (requestIndex === -1)
             return;
+        const request = this.requests[requestIndex];
         request.responseHeaders = xhr.responseHeaders || responseHeaders || {};
     }
     onXHRResponse(status, timeout, response, responseURL, responseType, xhr) {
-        const request = this.getRequest(xhr._index);
-        if (!request)
-            return;
         const endTime = Date.now();
-        Object.assign(request, {
-            status,
-            endTime,
-            duration: endTime - request.startTime,
-            responseBody: response,
-        });
-        this.debouncedNotify();
-    }
-    getRequest(xhrIndex) {
-        if (!this.xhrIdMap.has(xhrIndex))
-            return undefined;
-        const index = this.xhrIdMap.get(xhrIndex)();
-        return this.requests[index];
+        // Find request by ID directly in the array
+        const requestIndex = this.requests.findIndex((r) => r.id === `${xhr._index}`);
+        if (requestIndex !== -1) {
+            const request = this.requests[requestIndex];
+            Object.assign(request, {
+                status,
+                endTime,
+                duration: endTime - request.startTime,
+                responseBody: response,
+            });
+            this.debouncedNotify();
+        }
     }
     shouldIgnoreRequest(method, url) {
         // Check ignored hosts
@@ -396,7 +400,6 @@ class NetworkLogger {
                 }
             }
             this.isLogging = false;
-            this.xhrIdMap.clear();
         }
         catch (error) {
             console.error("[tudp-rn-debugger] Error stopping network logging:", error);

@@ -195,7 +195,7 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
                             " requests")),
                     onClose && (react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.headerCloseButton, onPress: onClose },
                         react_1.default.createElement(SmartIcon_1.Icon, { name: "close", size: 24, color: "#666" })))),
-                react_1.default.createElement(react_native_1.FlatList, { data: data.slice().reverse(), keyExtractor: (item) => item.id, renderItem: renderRequestItem, showsVerticalScrollIndicator: false, contentContainerStyle: styles.listContainer, ListEmptyComponent: react_1.default.createElement(react_native_1.View, { style: { padding: 40, alignItems: "center" } },
+                react_1.default.createElement(react_native_1.FlatList, { inverted: true, data: data.slice().reverse(), keyExtractor: (item) => item.id, renderItem: renderRequestItem, showsVerticalScrollIndicator: false, contentContainerStyle: styles.listContainer, ListEmptyComponent: react_1.default.createElement(react_native_1.View, { style: { padding: 40, alignItems: "center" } },
                         react_1.default.createElement(react_native_1.Text, { style: { color: "#999", fontSize: 16 } }, "No network requests yet"),
                         react_1.default.createElement(react_native_1.Text, { style: { color: "#999", fontSize: 14, marginTop: 8 } }, "Start making API calls to see them here")) }),
                 react_1.default.createElement(react_native_1.View, { style: styles.footer },

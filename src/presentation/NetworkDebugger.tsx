@@ -305,6 +305,7 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
             </View>
 
             <FlatList
+              inverted
               data={data.slice().reverse()} // Show newest first
               keyExtractor={(item) => item.id}
               renderItem={renderRequestItem}
