@@ -15,7 +15,9 @@
   },
   "peerDependencies": {
     "react": ">=18.0.0",
-    "react-native": ">=0.80.0"
+    "react-native": ">=0.80.0",
+    "react-native-vector-icons": ">=9.0.0",
+    "@react-native-clipboard/clipboard": ">=1.11.0"
   },
   "devDependencies": {
     "typescript": "^5.4.3",
