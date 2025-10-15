@@ -195,7 +195,7 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
                             " requests")),
                     onClose && (react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.headerCloseButton, onPress: onClose },
                         react_1.default.createElement(SmartIcon_1.Icon, { name: "close", size: 24, color: "#666" })))),
-                react_1.default.createElement(react_native_1.FlatList, { data: data.slice().reverse(), keyExtractor: (item) => item.id, renderItem: renderRequestItem, showsVerticalScrollIndicator: false, contentContainerStyle: styles.listContainer, ListEmptyComponent: react_1.default.createElement(react_native_1.View, { style: {
+                react_1.default.createElement(react_native_1.FlatList, { data: data || [], keyExtractor: (item) => item.id, renderItem: renderRequestItem, showsVerticalScrollIndicator: false, contentContainerStyle: styles.listContainer, ListEmptyComponent: react_1.default.createElement(react_native_1.View, { style: {
                             minHeight: 300,
                             justifyContent: "center",
                             alignItems: "center",
@@ -319,10 +319,6 @@ const styles = react_native_1.StyleSheet.create({
         marginTop: 4,
     },
     footer: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
         padding: 10,
         backgroundColor: "#fff",
         borderTopWidth: 1,

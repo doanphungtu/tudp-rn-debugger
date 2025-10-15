@@ -305,7 +305,7 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
             </View>
 
             <FlatList
-              data={data.slice().reverse()} // Show newest first
+              data={data || []}
               keyExtractor={(item) => item.id}
               renderItem={renderRequestItem}
               showsVerticalScrollIndicator={false}
@@ -461,10 +461,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     padding: 10,
     backgroundColor: "#fff",
     borderTopWidth: 1,
