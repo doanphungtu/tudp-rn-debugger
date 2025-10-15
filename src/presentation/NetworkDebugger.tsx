@@ -284,7 +284,7 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <SafeAreaView style={{ flex: 1, height: "100%", width: "100%" }}>
+      <SafeAreaView style={{ flex: 1 }}>
         {selectedRequest ? (
           renderRequestDetails()
         ) : (
@@ -305,14 +305,19 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
             </View>
 
             <FlatList
-              inverted
               data={data.slice().reverse()} // Show newest first
               keyExtractor={(item) => item.id}
               renderItem={renderRequestItem}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContainer}
               ListEmptyComponent={
-                <View style={{ padding: 40, alignItems: "center" }}>
+                <View
+                  style={{
+                    minHeight: 300,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
                   <Text style={{ color: "#999", fontSize: 16 }}>
                     No network requests yet
                   </Text>
@@ -381,7 +386,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   listContainer: {
-    paddingBottom: 80,
+    // paddingBottom: 80,
   },
   requestItem: {
     backgroundColor: "#fff",
@@ -543,6 +548,7 @@ const styles = StyleSheet.create({
   detailsFooter: {
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
+    padding: 12,
   },
   section: {
     marginBottom: 24,
@@ -582,7 +588,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
   },
   copyCurlButtonText: {
     color: "#fff",

@@ -185,7 +185,7 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
                         react_1.default.createElement(react_native_1.Text, { style: styles.copyCurlButtonText }, "Copy as cURL"))))));
     };
     return (react_1.default.createElement(react_native_1.Modal, { animationType: "slide", transparent: false, visible: visible, onRequestClose: onClose },
-        react_1.default.createElement(react_native_1.SafeAreaView, { style: { flex: 1, height: "100%", width: "100%" } },
+        react_1.default.createElement(react_native_1.SafeAreaView, { style: { flex: 1 } },
             selectedRequest ? (renderRequestDetails()) : (react_1.default.createElement(react_native_1.View, { style: styles.container },
                 react_1.default.createElement(react_native_1.View, { style: styles.header },
                     react_1.default.createElement(react_native_1.View, { style: styles.headerLeft },
@@ -195,7 +195,11 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
                             " requests")),
                     onClose && (react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.headerCloseButton, onPress: onClose },
                         react_1.default.createElement(SmartIcon_1.Icon, { name: "close", size: 24, color: "#666" })))),
-                react_1.default.createElement(react_native_1.FlatList, { inverted: true, data: data.slice().reverse(), keyExtractor: (item) => item.id, renderItem: renderRequestItem, showsVerticalScrollIndicator: false, contentContainerStyle: styles.listContainer, ListEmptyComponent: react_1.default.createElement(react_native_1.View, { style: { padding: 40, alignItems: "center" } },
+                react_1.default.createElement(react_native_1.FlatList, { data: data.slice().reverse(), keyExtractor: (item) => item.id, renderItem: renderRequestItem, showsVerticalScrollIndicator: false, contentContainerStyle: styles.listContainer, ListEmptyComponent: react_1.default.createElement(react_native_1.View, { style: {
+                            minHeight: 300,
+                            justifyContent: "center",
+                            alignItems: "center",
+                        } },
                         react_1.default.createElement(react_native_1.Text, { style: { color: "#999", fontSize: 16 } }, "No network requests yet"),
                         react_1.default.createElement(react_native_1.Text, { style: { color: "#999", fontSize: 14, marginTop: 8 } }, "Start making API calls to see them here")) }),
                 react_1.default.createElement(react_native_1.View, { style: styles.footer },
@@ -240,7 +244,7 @@ const styles = react_native_1.StyleSheet.create({
         marginTop: 4,
     },
     listContainer: {
-        paddingBottom: 80,
+    // paddingBottom: 80,
     },
     requestItem: {
         backgroundColor: "#fff",
@@ -402,6 +406,7 @@ const styles = react_native_1.StyleSheet.create({
     detailsFooter: {
         borderTopWidth: 1,
         borderTopColor: "#e0e0e0",
+        padding: 12,
     },
     section: {
         marginBottom: 24,
@@ -441,7 +446,6 @@ const styles = react_native_1.StyleSheet.create({
         borderRadius: 8,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 16,
     },
     copyCurlButtonText: {
         color: "#fff",
