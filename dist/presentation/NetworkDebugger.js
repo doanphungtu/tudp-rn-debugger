@@ -91,6 +91,16 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
             }, 100);
         }
     };
+    const handleCopyContent = async (content, type) => {
+        const textToCopy = safeStringify(content);
+        const success = await (0, curlGenerator_1.copyToClipboard)(textToCopy);
+        if (success) {
+            (0, Toast_1.showSuccessToast)(`${type} copied to clipboard!`);
+        }
+        else {
+            (0, Toast_1.showErrorToast)("Clipboard not available - showing in popup");
+        }
+    };
     const handleClear = () => {
         (0, NetworkInterceptor_1.clearRequests)();
         setData([]);
@@ -160,23 +170,35 @@ const NetworkDebugger = ({ visible = true, onClose, }) => {
                         safeStringify(selectedRequest.timestamp))),
                 selectedRequest.requestHeaders &&
                     Object.keys(selectedRequest.requestHeaders).length > 0 && (react_1.default.createElement(react_native_1.View, { style: styles.section },
-                    react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Request Headers"),
+                    react_1.default.createElement(react_native_1.View, { style: styles.sectionHeader },
+                        react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Request Headers"),
+                        react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.sectionCopyButton, onPress: () => handleCopyContent(selectedRequest.requestHeaders, "Request Headers") },
+                            react_1.default.createElement(SmartIcon_1.Icon, { name: "content-copy", size: 16, color: "#666" }))),
                     Object.entries(selectedRequest.requestHeaders).map(([key, value]) => (react_1.default.createElement(react_native_1.Text, { key: key, style: styles.headerText },
                         safeStringify(key),
                         ": ",
                         safeStringify(value)))))),
                 selectedRequest.requestBody && (react_1.default.createElement(react_native_1.View, { style: styles.section },
-                    react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Request Body"),
+                    react_1.default.createElement(react_native_1.View, { style: styles.sectionHeader },
+                        react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Request Body"),
+                        react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.sectionCopyButton, onPress: () => handleCopyContent(selectedRequest.requestBody, "Request Body") },
+                            react_1.default.createElement(SmartIcon_1.Icon, { name: "content-copy", size: 16, color: "#666" }))),
                     react_1.default.createElement(react_native_1.Text, { style: styles.bodyText }, safeStringify(selectedRequest.requestBody)))),
                 selectedRequest.responseHeaders &&
                     Object.keys(selectedRequest.responseHeaders).length > 0 && (react_1.default.createElement(react_native_1.View, { style: styles.section },
-                    react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Response Headers"),
+                    react_1.default.createElement(react_native_1.View, { style: styles.sectionHeader },
+                        react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Response Headers"),
+                        react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.sectionCopyButton, onPress: () => handleCopyContent(selectedRequest.responseHeaders, "Response Headers") },
+                            react_1.default.createElement(SmartIcon_1.Icon, { name: "content-copy", size: 16, color: "#666" }))),
                     Object.entries(selectedRequest.responseHeaders).map(([key, value]) => (react_1.default.createElement(react_native_1.Text, { key: key, style: styles.headerText },
                         safeStringify(key),
                         ": ",
                         safeStringify(value)))))),
                 selectedRequest.responseBody && (react_1.default.createElement(react_native_1.View, { style: styles.section },
-                    react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Response Body"),
+                    react_1.default.createElement(react_native_1.View, { style: styles.sectionHeader },
+                        react_1.default.createElement(react_native_1.Text, { style: styles.sectionTitle }, "Response Body"),
+                        react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.sectionCopyButton, onPress: () => handleCopyContent(selectedRequest.responseBody, "Response Body") },
+                            react_1.default.createElement(SmartIcon_1.Icon, { name: "content-copy", size: 16, color: "#666" }))),
                     react_1.default.createElement(react_native_1.Text, { style: styles.bodyText }, safeStringify(selectedRequest.responseBody))))),
             react_1.default.createElement(react_native_1.View, { style: styles.detailsFooter },
                 react_1.default.createElement(react_native_1.TouchableOpacity, { style: styles.copyCurlButton, onPress: () => handleCopyCurl(selectedRequest) },
@@ -411,10 +433,24 @@ const styles = react_native_1.StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: "#333",
+        flex: 1,
+    },
+    sectionHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
         marginBottom: 8,
         borderBottomWidth: 1,
         borderBottomColor: "#e0e0e0",
         paddingBottom: 4,
+    },
+    sectionCopyButton: {
+        padding: 6,
+        borderRadius: 4,
+        backgroundColor: "#f0f0f0",
+        alignItems: "center",
+        justifyContent: "center",
+        marginLeft: 8,
     },
     detailText: {
         fontSize: 14,

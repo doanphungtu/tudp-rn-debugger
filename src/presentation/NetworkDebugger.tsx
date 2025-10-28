@@ -104,6 +104,17 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
       }, 100);
     }
   };
+
+  const handleCopyContent = async (content: any, type: string) => {
+    const textToCopy = safeStringify(content);
+    const success = await copyToClipboard(textToCopy);
+
+    if (success) {
+      showSuccessToast(`${type} copied to clipboard!`);
+    } else {
+      showErrorToast("Clipboard not available - showing in popup");
+    }
+  };
   const handleClear = () => {
     clearRequests();
     setData([]);
@@ -218,7 +229,20 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
           {selectedRequest.requestHeaders &&
             Object.keys(selectedRequest.requestHeaders).length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Request Headers</Text>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Request Headers</Text>
+                  <TouchableOpacity
+                    style={styles.sectionCopyButton}
+                    onPress={() =>
+                      handleCopyContent(
+                        selectedRequest.requestHeaders,
+                        "Request Headers"
+                      )
+                    }
+                  >
+                    <Icon name="content-copy" size={16} color="#666" />
+                  </TouchableOpacity>
+                </View>
                 {Object.entries(selectedRequest.requestHeaders).map(
                   ([key, value]) => (
                     <Text key={key} style={styles.headerText}>
@@ -231,7 +255,20 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
 
           {selectedRequest.requestBody && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Request Body</Text>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Request Body</Text>
+                <TouchableOpacity
+                  style={styles.sectionCopyButton}
+                  onPress={() =>
+                    handleCopyContent(
+                      selectedRequest.requestBody,
+                      "Request Body"
+                    )
+                  }
+                >
+                  <Icon name="content-copy" size={16} color="#666" />
+                </TouchableOpacity>
+              </View>
               <Text style={styles.bodyText}>
                 {safeStringify(selectedRequest.requestBody)}
               </Text>
@@ -241,7 +278,20 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
           {selectedRequest.responseHeaders &&
             Object.keys(selectedRequest.responseHeaders).length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Response Headers</Text>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Response Headers</Text>
+                  <TouchableOpacity
+                    style={styles.sectionCopyButton}
+                    onPress={() =>
+                      handleCopyContent(
+                        selectedRequest.responseHeaders,
+                        "Response Headers"
+                      )
+                    }
+                  >
+                    <Icon name="content-copy" size={16} color="#666" />
+                  </TouchableOpacity>
+                </View>
                 {Object.entries(selectedRequest.responseHeaders).map(
                   ([key, value]) => (
                     <Text key={key} style={styles.headerText}>
@@ -254,7 +304,20 @@ const NetworkDebugger: React.FC<NetworkDebuggerProps> = ({
 
           {selectedRequest.responseBody && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Response Body</Text>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Response Body</Text>
+                <TouchableOpacity
+                  style={styles.sectionCopyButton}
+                  onPress={() =>
+                    handleCopyContent(
+                      selectedRequest.responseBody,
+                      "Response Body"
+                    )
+                  }
+                >
+                  <Icon name="content-copy" size={16} color="#666" />
+                </TouchableOpacity>
+              </View>
               <Text style={styles.bodyText}>
                 {safeStringify(selectedRequest.responseBody)}
               </Text>
@@ -553,10 +616,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
+    flex: 1,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
     paddingBottom: 4,
+  },
+  sectionCopyButton: {
+    padding: 6,
+    borderRadius: 4,
+    backgroundColor: "#f0f0f0",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 8,
   },
   detailText: {
     fontSize: 14,
