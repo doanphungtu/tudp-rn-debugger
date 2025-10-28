@@ -11,8 +11,8 @@
     "clean": "rm -rf dist",
     "build": "npx tsc -p tsconfig.json",
     "test": "jest --runInBand",
-    "prepare": "yarn build",
-    "prepublishOnly": "yarn build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "@react-native-clipboard/clipboard": ">=1.11.0",
@@ -29,7 +29,6 @@
     "react": "^19.0.0",
     "react-native": "0.80.1",
     "react-test-renderer": "^19.2.0",
-    "semver": "^7.7.3",
     "ts-jest": "^29.1.1",
     "typescript": "^5.4.3"
   },
