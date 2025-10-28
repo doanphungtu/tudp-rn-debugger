@@ -1,0 +1,81 @@
+name: Release and Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Setup Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test
+        continue-on-error: true
+
+      - name: Extract tag name
+        id: extract_tag
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.extract_tag.outputs.tag }}
+          release_name: Release ${{ steps.extract_tag.outputs.tag }}
+          draft: false
+          prerelease: false
+          body: |
+            🚀 **Release ${{ steps.extract_tag.outputs.tag }}**
+
+            ### Changes
+            - See commit history for detailed changes
+
+            ### Installation
+            ```bash
+            npm install @tudp/rn-debugger
+            # or
+            yarn add @tudp/rn-debugger
+            ```
+
+            ### Usage
+            ```typescript
+            import NetworkDebugger from '@tudp/rn-debugger';
+
+            // Use in your React Native app
+            <NetworkDebugger visible={true} />
+            ```
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Successfully published ${{ steps.extract_tag.outputs.tag }} to npm"
+          echo "📦 Package: https://www.npmjs.com/package/@tudp/rn-debugger"

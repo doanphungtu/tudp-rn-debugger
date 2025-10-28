@@ -1,56 +1,392 @@
-# TUDP React Native Network Debugger
+# 🚀 @tudp/rn-debugger# 🚀 @tudp/rn-debugger
 
-A powerful React Native network debugging library with advanced features for monitoring API calls, generating cURL commands, and detailed request/response inspection.
+React Native Network Debugger với Clean Architecture - Zero native dependencies (JS only)React Native Network Debugger với Clean Architecture - Zero native dependencies (JS only)
 
-## Features
+[![npm version](https://badge.fury.io/js/@tudp%2Frn-debugger.svg)](https://badge.fury.io/js/@tudp%2Frn-debugger)[![npm version](https://badge.fury.io/js/@tudp%2Frn-debugger.svg)](https://badge.fury.io/js/@tudp%2Frn-debugger)
 
-- 🚀 **Real-time Network Monitoring**: Automatically captures all fetch requests
-- 💪 **Force Override**: Overrides other network monitoring tools (like Reactotron) when needed
-- 📋 **Copy as cURL**: Generate and copy cURL commands for any request
-- 🎯 **Detailed Inspection**: View headers, body, response, timing, and status
-- 🧹 **Clear Requests**: Easy management of captured requests
-- 📱 **React Native UI**: Beautiful, responsive UI for viewing network requests
-- 🏗️ **Clean Architecture**: Well-structured, maintainable codebase
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Installation
+## ✨ Features## ✨ Features
 
-```bash
-npm install @tudp/rn-debugger
-# or
-yarn add @tudp/rn-debugger
+- 🔍 **Real-time network monitoring** - Theo dõi tất cả network requests- � **Real-time network monitoring** - Theo dõi tất cả network requests
+
+- 📋 **Detailed request/response** - Xem chi tiết headers, body, status- � **Detailed request/response** - Xem chi tiết headers, body, status
+
+- 📝 **Copy as cURL** - Generate và copy cURL commands- � **Copy as cURL** - Generate và copy cURL commands
+
+- 🎯 **Individual section copying** - Copy riêng headers, body parts- 🎯 **Individual section copying** - Copy riêng headers, body parts
+
+- 🎨 **Clean UI** - Giao diện trực quan, dễ sử dụng- 🎨 **Clean UI** - Giao diện trực quan, dễ sử dụng
+
+- 🏗️ **Clean Architecture** - Code structure rõ ràng, dễ maintain- 🏗️ **Clean Architecture** - Code structure rõ ràng, dễ maintain
+
+- 📱 **Zero native deps** - Chỉ JavaScript, không cần link native- 📱 **Zero native deps** - Chỉ JavaScript, không cần link native
+
+- 🔔 **Toast notifications** - Thông báo user-friendly- 🔔 **Toast notifications** - Thông báo user-friendly
+
+## 📦 Installation## 📦 Installation
+
+`bash`bash
+
+npm install @tudp/rn-debuggernpm install @tudp/rn-debugger
+
+# or# or
+
+yarn add @tudp/rn-debuggeryarn add @tudp/rn-debugger
+
+````
+
+
+
+### Peer Dependencies### Peer Dependencies
+
+
+
+```bash```bash
+
+npm install @react-native-clipboard/clipboard react-native-vector-iconsnpm install @react-native-clipboard/clipboard react-native-vector-icons
+
+# or  # or
+
+yarn add @react-native-clipboard/clipboard react-native-vector-iconsyarn add @react-native-clipboard/clipboard react-native-vector-icons
+
+````
+
+## 🎯 Quick Start## 🎯 Quick Start
+
+`typescript`typescript
+
+import React, { useEffect } from 'react';import React, { useEffect } from 'react';
+
+import NetworkDebugger, { startNetworkLogging } from '@tudp/rn-debugger';import NetworkDebugger, { startNetworkLogging } from '@tudp/rn-debugger';
+
+function App() {function App() {
+
+useEffect(() => { useEffect(() => {
+
+    // Bắt đầu monitor network requests    // Bắt đầu monitor network requests
+
+    startNetworkLogging();    startNetworkLogging();
+
+}, []); }, []);
+
+return ( return (
+
+    <NetworkDebugger     <NetworkDebugger
+
+      visible={__DEV__} // Chỉ hiện ở development      visible={__DEV__} // Chỉ hiện ở development
+
+      onClose={() => {/* handle close */}}      onClose={() => {/* handle close */}}
+
+    />    />
+
+); );
+
+}}
+
+`````
+
+
+
+## 🔧 API Reference## 🔧 API Reference
+
+
+
+### Components### Components
+
+
+
+#### `NetworkDebugger`#### `NetworkDebugger`
+
+
+
+```typescriptMain component để hiển thị network debugger UI.
+
+<NetworkDebugger
+
+  visible={boolean}     // Show/hide debugger```typescript
+
+  onClose={() => void}  // Callback khi đóngimport NetworkDebugger from '@tudp/rn-debugger';
+
+/>
+
+```<NetworkDebugger
+
+  visible={boolean}     // Show/hide debugger
+
+### Functions  onClose={() => void}  // Callback khi đóng
+
+/>
+
+```typescript```
+
+import {
+
+  startNetworkLogging, ### Functions
+
+  stopNetworkLogging,
+
+  getRequests,#### Network Monitoring
+
+  clearRequests
+
+} from '@tudp/rn-debugger';```typescript
+
+import {
+
+// Bắt đầu monitor  startNetworkLogging,
+
+startNetworkLogging();  stopNetworkLogging,
+
+  getRequests,
+
+// Dừng monitor  clearRequests
+
+stopNetworkLogging();} from '@tudp/rn-debugger';
+
+
+
+// Lấy danh sách requests// Bắt đầu monitor
+
+const requests = getRequests();startNetworkLogging({
+
+  maxRequests: 100,  // Max số requests lưu (default: 100)
+
+// Xóa tất cả requests  enableCurl: true   // Enable cURL generation (default: true)
+
+clearRequests();});
+
 ```
 
-### For Icon Support (Required)
+// Dừng monitor
 
-This library uses react-native-vector-icons for UI icons:
+## 🎨 Features DetailstopNetworkLogging();
+
+
+
+### 📋 Copy Functionality// Lấy danh sách requests
+
+const requests = getRequests();
+
+- **Copy as cURL**: Generate complete cURL command
+
+- **Copy Headers**: Copy request/response headers riêng// Xóa tất cả requests
+
+- **Copy Body**: Copy request/response body riêng  clearRequests();
+
+- **Toast notifications**: Thông báo khi copy thành công/thất bại```
+
+
+
+### 🔍 Request Details#### Utilities
+
+
+
+- **General Info**: Method, URL, Status, Duration, Timestamp```typescript
+
+- **Request Headers**: Tất cả headers được gửiimport {
+
+- **Request Body**: JSON, FormData, text...  generateCurlCommand,
+
+- **Response Headers**: Headers từ server  copyToClipboard,
+
+- **Response Body**: JSON response, HTML, text...  formatDuration,
+
+  formatTimestamp
+
+## 🛠️ Development} from '@tudp/rn-debugger';
+
+
+
+### Build// Generate cURL từ request
+
+const curl = generateCurlCommand(networkRequest);
 
 ```bash
-npm install react-native-vector-icons
-# or
-yarn add react-native-vector-icons
+
+yarn build// Copy to clipboard
+
+```const success = await copyToClipboard('text to copy');
+
+
+
+### Test// Format thời gian
+
+const duration = formatDuration(1500); // "1.5s"
+
+```bashconst timestamp = formatTimestamp(Date.now()); // "14:30:25"
+
+yarn test```
+
 ```
 
-Follow the [installation guide](https://github.com/oblador/react-native-vector-icons#installation) for react-native-vector-icons to set up the native dependencies.
+## 🎨 Features Detail
 
-### For Clipboard Functionality (Optional)
+### Release
 
-To enable the "Copy as cURL" feature, install the clipboard library:
+### 📋 Copy Functionality
 
 ```bash
-# Install clipboard dependency for copy functionality
-npm install @react-native-clipboard/clipboard
-# or
-yarn add @react-native-clipboard/clipboard
 
-# Follow setup instructions for react-native-clipboard
-npx pod-install # for iOS
-```
+./scripts/release.sh- **Copy as cURL**: Generate complete cURL command
 
-## Quick Start
+```- **Copy Headers**: Copy request/response headers riêng
 
-### 1. Start Network Logging
+- **Copy Body**: Copy request/response body riêng
+
+## 📝 Changelog- **Toast notifications**: Thông báo khi copy thành công/thất bại
+
+
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed changes.### 🔍 Request Details
+
+
+
+## 🤝 Contributing- **General Info**: Method, URL, Status, Duration, Timestamp
+
+- **Request Headers**: Tất cả headers được gửi
+
+1. Fork the repo- **Request Body**: JSON, FormData, text...
+
+2. Create feature branch (`git checkout -b feature/amazing-feature`)- **Response Headers**: Headers từ server
+
+3. Commit changes (`git commit -m 'Add amazing feature'`)- **Response Body**: JSON response, HTML, text...
+
+4. Push to branch (`git push origin feature/amazing-feature`)
+
+5. Open Pull Request### 🎯 Clean Architecture
+
+
+
+## 📄 License```
+
+src/
+
+MIT © [tudp](https://github.com/doanphungtu)├── domain/          # Business logic
+
+│   ├── models/      # Data models
+
+## 🔗 Links│   └── repositories/ # Repository interfaces
+
+├── infrastructure/ # External services
+
+- **NPM Package**: https://www.npmjs.com/package/@tudp/rn-debugger├── presentation/   # UI components
+
+- **GitHub Repository**: https://github.com/doanphungtu/tudp-rn-debugger└── utils/          # Helper functions
+
+- **Issues**: https://github.com/doanphungtu/tudp-rn-debugger/issues```
+
+
+
+---## 🔧 Advanced Usage
+
+
+
+Made with ❤️ by [tudp](https://github.com/doanphungtu)### Custom Integration
 
 ```typescript
+import { addCallback, removeCallback } from '@tudp/rn-debugger';
+
+// Listen to network requests
+const callback = (requests) => {
+  console.log('New request:', requests[requests.length - 1]);
+};
+
+addCallback(callback);
+
+// Cleanup
+removeCallback(callback);
+```
+
+### Development Only
+
+```typescript
+// App.tsx
+import NetworkDebugger from '@tudp/rn-debugger';
+
+function App() {
+  return (
+    <>
+      {/* Your app content */}
+
+      {/* Only show in development */}
+      {__DEV__ && <NetworkDebugger visible={true} />}
+    </>
+  );
+}
+```
+
+### Modal Integration
+
+```typescript
+import React, { useState } from 'react';
+import { Button } from 'react-native';
+import NetworkDebugger from '@tudp/rn-debugger';
+
+function DebugPanel() {
+  const [showDebugger, setShowDebugger] = useState(false);
+
+  return (
+    <>
+      <Button
+        title="Open Network Debugger"
+        onPress={() => setShowDebugger(true)}
+      />
+
+      <NetworkDebugger
+        visible={showDebugger}
+        onClose={() => setShowDebugger(false)}
+      />
+    </>
+  );
+}
+```
+
+## 🛠️ Development
+
+### Build
+
+```bash
+yarn build
+```
+
+### Test
+
+```bash
+yarn test
+```
+
+### Release
+
+```bash
+./scripts/release.sh
+```
+
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed changes.
+
+## 🤝 Contributing
+
+1. Fork the repo
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+## 📄 License
+
+MIT © [tudp](https://github.com/doanphungtu)
+
+## 🔗 Links
+
+- **NPM Package**: https://www.npmjs.com/package/@tudp/rn-debugger
+- **GitHub Repository**: https://github.com/doanphungtu/tudp-rn-debugger
+- **Issues**: https://github.com/doanphungtu/tudp-rn-debugger/issues
+
+---
+
+Made with ❤️ by [tudp](https://github.com/doanphungtu)
 import { startNetworkLogging } from "@tudp/rn-debugger";
 
 // Basic usage - Uses XHRInterceptor when available, falls back to fetch patching
@@ -347,3 +683,4 @@ npm pack
    ```
 
 Note: When linking locally, use Metro config to alias react/react-native to the demo app to avoid duplicate react instances.
+`````

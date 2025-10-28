@@ -10,6 +10,7 @@ export {
 } from "./infrastructure/NetworkInterceptor";
 export type { StartNetworkLoggingOptions } from "./infrastructure/NetworkInterceptor";
 export { default as NetworkDebugger } from "./presentation/NetworkDebugger";
+export type { NetworkDebuggerProps } from "./presentation/NetworkDebugger";
 export type { NetworkRequest } from "./domain/models/NetworkRequest";
 export {
   generateCurlCommand,
